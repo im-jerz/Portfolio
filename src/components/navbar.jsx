@@ -1,80 +1,114 @@
-// src/components/Navbar.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const BRAND_NAME = "JERSON";
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navItems = [
     { label: "Home", href: "#" },
-    { label: "About", href: "#" },
-    { label: "Projects", href: "#" },
-    { label: "Cloud", href: "#" },
-    { label: "Research", href: "#" },
-    { label: "Blog", href: "#" },
-    { label: "Contact", href: "#" },
+    { label: "About", href: "#about" },
+    { label: "Projects", href: "#projects" },
+    { label: "Research", href: "#research" },
+    { label: "Blog", href: "#blog" },
   ];
 
   return (
-    <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-4xl">
-      <div className="flex items-center justify-between px-5 py-3 bg-white/90 backdrop-blur-xl border border-black/10 rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.06)] transition-all duration-300 hover:shadow-[0_6px_24px_-2px_rgba(0,0,0,0.08)]">
-        <span className="font-mono text-sm font-bold text-black tracking-tighter">
-          Jerson
-        </span>
+    <header
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        scrolled ? "py-4" : "py-6"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6">
+        <div
+          className={`flex items-center justify-between px-6 py-2.5 transition-all duration-500 border rounded-full bg-white/70 backdrop-blur-md ${
+            scrolled ? "border-zinc-200 shadow-sm" : "border-transparent"
+          }`}
+        >
+          <a href="#" className="flex items-center gap-2 group">
+            <div className="w-2 h-2 bg-black rounded-full group-hover:scale-125 transition-transform" />
+            <span className="font-mono text-sm font-bold tracking-widest uppercase">
+              {BRAND_NAME}
+            </span>
+          </a>
 
-        <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-8">
+            {navItems.map((item, idx) => (
+              <a
+                key={idx}
+                href={item.href}
+                className="font-mono text-[11px] uppercase tracking-widest text-zinc-500 hover:text-black transition-colors relative group"
+              >
+                {item.label}
+                <span className="absolute -bottom-1 left-0 w-0 h-px bg-black transition-all duration-300 group-hover:w-full" />
+              </a>
+            ))}
+          </nav>
+
+          <div className="hidden md:flex items-center">
+            <a
+              href="#contact"
+              className="px-5 py-1.5 bg-black text-white rounded-full font-mono text-[11px] uppercase tracking-wider hover:bg-zinc-800 transition-all"
+            >
+              Contact
+            </a>
+          </div>
+          <button
+            className="md:hidden text-black p-1 transition-opacity hover:opacity-60"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <div className="w-6 h-5 flex flex-col justify-between items-end">
+              <span
+                className={`h-px bg-black transition-all duration-300 ${
+                  isMenuOpen ? "w-6 translate-y-2 -rotate-45" : "w-6"
+                }`}
+              />
+              <span
+                className={`h-px bg-black transition-all duration-300 ${
+                  isMenuOpen ? "opacity-0" : "w-4"
+                }`}
+              />
+              <span
+                className={`h-px bg-black transition-all duration-300 ${
+                  isMenuOpen ? "w-6 -translate-y-2 rotate-45" : "w-5"
+                }`}
+              />
+            </div>
+          </button>
+        </div>
+      </div>
+      <div
+        className={`fixed inset-0 bg-white z-[-1] transition-transform duration-500 ease-in-out md:hidden ${
+          isMenuOpen ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
+        <div className="flex flex-col items-center justify-center h-full gap-8">
           {navItems.map((item, idx) => (
             <a
               key={idx}
               href={item.href}
-              className="font-mono text-xs font-medium text-black/80 hover:text-black transition-colors relative group"
+              className="text-3xl font-medium tracking-tighter hover:italic transition-all"
+              onClick={() => setIsMenuOpen(false)}
             >
               {item.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-px bg-black transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
-        </nav>
-
-        <button
-          className="md:hidden text-black p-1.5 focus:outline-none transition-opacity hover:opacity-80"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="Toggle navigation"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.8}
-            viewBox="0 0 24 24"
+          <a
+            href="#contact"
+            onClick={() => setIsMenuOpen(false)}
+            className="mt-4 px-10 py-4 bg-black text-white rounded-full font-mono text-sm uppercase tracking-widest"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d={
-                isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"
-              }
-            />
-          </svg>
-        </button>
-      </div>
-
-      {isMenuOpen && (
-        <div className="mt-3 md:hidden">
-          <div className="bg-white backdrop-blur-xl rounded-2xl border border-black/15 shadow-xl overflow-hidden">
-            <div className="p-5 space-y-3">
-              {navItems.map((item, idx) => (
-                <a
-                  key={idx}
-                  href={item.href}
-                  className="block py-2.5 font-mono text-sm font-medium text-black hover:text-gray-800 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
-          </div>
+            Get in Touch
+          </a>
         </div>
-      )}
+      </div>
     </header>
   );
 };
